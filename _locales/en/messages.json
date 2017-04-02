@@ -1,0 +1,172 @@
+{
+   "extName": {
+      "message": "Atomic Bookmarks 2"
+   },
+   "extDescription": {
+      "message": "Search and organize your bookmarks quickly."
+   },
+   "extTitle": {
+      "message": "View/Search Bookmarks"
+   },
+   
+   "lockTitle": {
+      "message": "Lock/Unlock Startup Folder"
+   },
+   "showRecent": {
+      "message": "Show Recent/All Bookmarks"
+   },
+   "addToFavorites": {
+      "message": "Add Bookmark To Favorites"
+   },
+   "saveSessionToFavorites": {
+      "message": "Save Session To Favorites"
+   },
+   "openBookmarksManager": {
+      "message": "Open Google Chrome Bookmarks Manager"
+   },
+   
+   "name": {
+      "message": "Name"
+   },
+   "folder": {
+      "message": "Folder"
+   },
+   "bookmark": {
+      "message": "Bookmark"
+   },
+   "scriplet": {
+      "message": "Scriplet"
+   },
+   
+   "addBookmarkHere": {
+      "message": "Add Bookmark Here"
+   },
+   "saveSessionHere": {
+      "message": "Save Session Here"
+   },
+   "openAllBookmarks": {
+      "message": "Open All Bookmarks"
+   },
+   "openAllInNewWindow": {
+      "message": "Open All in New Window"
+   },
+   "openFolderInIncognitoWindow": {
+      "message": "Open All in Incognito Window"
+   },
+   "createNewFolder": {
+      "message": "Create New Folder"
+   },
+   "editFolder": {
+      "message": "Edit Folder"
+   },
+   "deleteFolder": {
+      "message": "Delete Folder"
+   },
+   
+   "openBmInBackgroundTab": {
+      "message": "Open in Background Tab"
+   },
+   "openBmInForegroundTab": {
+      "message": "Open in Foreground Tab"
+   },
+   "openBmInCurrentTab": {
+      "message": "Open in Current Tab"
+   },
+   "openBmInNewWindow": {
+      "message": "Open in New Window"
+   },
+   "openBmInIncognitoWindow": {
+      "message": "Open in Incognito Window"
+   },
+   "editBookmark": {
+      "message": "Edit Bookmark"
+   },
+   "deleteBookmark": {
+      "message": "Delete Bookmark"
+   },
+   
+   "newFolder": {
+      "message": "New Folder"
+   },
+   
+   "ok": {
+      "message": "Ok"
+   },
+   "cancel": {
+      "message": "Cancel"
+   },
+   
+   "confirmDeleteFolder": {
+      "message": "and all subitems will be removed. Are you sure?"
+   },
+   
+   "type": {
+      "message": "Type"
+   },
+   "added": {
+      "message": "Added"
+   },
+   
+   "recentBookmarks": {
+      "message": "Recent Bookmarks"
+   },
+   
+   
+   "atomicBookmarksOptions": {
+      "message": "Atomic Bookmarks Options"
+   },
+   "openLinkOptions": {
+      "message": "Open Link Options"
+   },
+   "openLinkLeftButtonOptions": {
+      "message": "With left mouse button"
+   },
+   "openLinkMiddleButtonOptions": {
+      "message": "With middle button/wheel"
+   },
+   "inNewWindowOpt": {
+      "message": "Open in New Window"
+   },
+   "inNewTabOpt": {
+      "message": "Open in New Tab"
+   },
+   "inBackgroundOpt": {
+      "message": "In Background"
+   },
+   "inCurrentTabOpt": {
+      "message": "Open in Current Tab"
+   },
+   "keepWindowOpenOpt": {
+      "message": "Keep Bookmarks Window Open"
+   },
+   "recentBookmarksNumberOpt": {
+      "message": "Recent Bookmarks Number"
+   },
+   "extendedInformationOpt": {
+      "message": "Show extended information when hovering over a bookmark"
+   },
+   "showExtendedInformationOpt": {
+      "message": "Show at the bottom panel"
+   },
+   "showExtendedInformationTooltipOpt": {
+      "message": "Show in Tooltips"
+   },
+   "editingBookmarksOpt": {
+      "message": "Editing Bookmarks"
+   },
+   "openManagerInNewWindowOpt": {
+      "message": "Open Google Chrome Bookmarks Manager in New Window"
+   },
+   "favBookmarkFoldersOpt": {
+      "message": "Favorite Bookmark Folders"
+   },
+   "startupFolderOpt": {
+      "message": "Startup Folder"
+   },
+   "favBookmarksFolderOpt": {
+      "message": "Quick Bookmarks Folder"
+   },
+   "favSessionsFolderOpt": {
+      "message": "Quick Sessions Folder"
+   }
+}
