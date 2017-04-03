@@ -272,7 +272,9 @@ AB.list = Class.create({
                 }
                 // filtering
                 var oThis = this;
-                var childs = chrome.bookmarks.getChildren(lnk.id, function (childs) { childs.each(oThis._add_item, oThis); });
+                chrome.bookmarks.getChildren(lnk.id, function (childs) {
+                    childs.each(oThis._add_item, oThis);
+                });
             } else
             {
                 // building a tree
