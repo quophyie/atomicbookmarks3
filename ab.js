@@ -164,7 +164,8 @@ AB.list = Class.create({
                     }, oThis);
                 });
             }
-            oThis._build_tree(tree);
+            //oThis._build_tree(tree);
+					oThis._build_tree_new(tree);
         });
     },
 
@@ -230,6 +231,144 @@ AB.list = Class.create({
         tree.each(this._add_item, this);
     },
 
+	_build_tree_new: function (tree) {
+		var oThis;
+		if (this.filter == '') {
+			oThis = this;
+			if (tree[0])
+				chrome.bookmarks.get(tree[0].parentId, function (lnk) {
+					oThis.isLeaf = true;
+					oThis._build_title_new(lnk, oThis.isLeaf);
+				});
+			else
+				chrome.bookmarks.get(this.node, function (lnk) {
+					oThis.isLeaf = true;
+					oThis._build_title_new(lnk, oThis.isLeaf);
+				});
+		} else {
+			oThis = this;
+			/*chrome.bookmarks.getChildren("0", function (children) {
+				children.each(function (lnk) {
+					if (lnk.id != 1) {
+						oThis._add_item_new(lnk);
+					}
+				}, oThis);
+			});*/
+			//chrome.bookmarks.get(tree[0].parentId, function(lnk){ oThis._add_item(lnk[0]); });
+			chrome.bookmarks.search(this.filter, function (unfilteredResults) {
+				var bResultsMustContainQueryPhrase = $F('results_contains_query_phrase');
+
+				// If the results (the title or url properties of result object)
+				// must contain the query phrase in the order that query phrase was provided
+				// then we filter for results that contain the exact query phrase e.g
+				// if "java stuff" is the query  phrase and bResultsMustContainQueryPhrase === true,
+				// then the url or title properties of the result object must contain the
+				// contain the phrase "java stuff"
+				if (bResultsMustContainQueryPhrase) {
+					var filteredResults = unfilteredResults.filter(function (lnk) {
+						return ((lnk.url && lnk.url.toLowerCase().indexOf(oThis.filter.toLowerCase()) >= 0 ) || (lnk.title && lnk.title.toLowerCase().indexOf(oThis.filter.toLowerCase()) >= 0))
+
+					})
+					//filteredResults.each(oThis._add_item_new, oThis);
+					oThis.bResultsMustContainQueryPhrase = bResultsMustContainQueryPhrase;
+					async.each(filteredResults, oThis._add_item_new.bind(oThis));
+				} else {
+					async.each(unfilteredResults, oThis._add_item_new.bind(oThis));
+					//unfilteredResults.each(oThis._add_item_new, oThis);
+				}
+
+			})
+		}
+
+		//tree.each(this._add_item_new, this);
+	},
+
+
+	_add_item_new: function (lnk)
+	{
+		var row;
+		// URLs
+		if (lnk.url)
+		{
+			/*if (this.filter != '' && !(lnk.url.toLowerCase().indexOf(this.filter.toLowerCase()) >= 0 || lnk.title.toLowerCase().indexOf(this.filter.toLowerCase()) >= 0))
+			{
+				return;
+			}*/
+			row = this._create_node(lnk);
+
+			this.list_ul.insert(row);
+		} else
+		{
+			/*if (this.filter != '')
+			{*/
+				// filter folder name
+				if (this.bResultsMustContainQueryPhrase && lnk.title.toLowerCase().indexOf(this.filter.toLowerCase()) >= 0)
+				{
+					row = this._create_folder(lnk);
+					this.list_ul.insert(row);
+				} else {
+					var splitFilter = this.filter.split(' ');
+					var oThis = this;
+					var callback = function (item, cb) {
+
+          }
+					async.some(splitFilter, function(item, callback) {
+					  var bFound = lnk.title.toLowerCase().indexOf(item.toLowerCase()) >= 0;
+					  if (bFound){
+					      callback(lnk, lnk);
+            }
+          },
+						function(result) {
+					    if (result) {
+								row = oThis._create_folder(lnk);
+								oThis.list_ul.insert(row);
+							}
+            })
+        }
+				// filtering
+			//	var oThis = this;
+			//	chrome.bookmarks.getChildren(lnk.id, function (childs) {
+			//		childs.each(oThis._add_item, oThis);
+			//	});
+			/*}
+			else
+			{
+				// building a tree
+				row = this._create_folder(lnk);
+				this.list_ul.insert(row);
+			}*/
+		}
+	},
+
+	_build_title_new: function (tree, isUserSelectedTitle)
+	{
+		// do things here
+		var row;
+		var treeNode = tree instanceof Array ? tree[0] : tree
+		if (treeNode.id != "0")
+		{
+			row = this._create_folder(treeNode, true);
+			if (!isUserSelectedTitle)
+			  this.title_ul.insert({ top: row });
+			var oThis = this;
+			chrome.bookmarks.get(treeNode.parentId, function (links) {
+			 if (isUserSelectedTitle && links instanceof Array && links.length > 0) {
+			   isUserSelectedTitle = false;
+			   // this._add_item_new(lnk);
+				 chrome.bookmarks.getChildren(treeNode.id, function (children) {
+					 async.each(children, oThis._add_item_new.bind(oThis));
+					 oThis._build_title_new(treeNode, isUserSelectedTitle);
+				 });
+			 }else {
+				 oThis._build_title_new(links, isUserSelectedTitle);
+       }
+			});
+		} else
+		{
+			row = this._create_folder({ id: "0", title: "\\" }, true);
+			this.title_ul.insert({ top: row });
+		}
+	},
     _build_title: function (tree)
     {
         // do things here

@@ -396,7 +396,7 @@ var search_key = function ()
 
         var dt = new Date();
         last_search_time = dt.getTime();
-        setTimeout("run_search(" + last_search_time + ")", 400);
+        setTimeout("run_search(" + last_search_time + ")", 700);
     }
 };
 
