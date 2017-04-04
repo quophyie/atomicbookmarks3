@@ -164,8 +164,7 @@ AB.list = Class.create({
                     }, oThis);
                 });
             }
-            //oThis._build_tree(tree);
-					oThis._build_tree_new(tree);
+					oThis._build_tree(tree);
         });
     },
 
@@ -203,58 +202,24 @@ AB.list = Class.create({
         this.populate();
     },
 
-    _build_tree: function (tree)
-    {
-        var oThis;
-        if (this.filter == '')
-        {
-            oThis = this;
-            if (tree[0])
-                chrome.bookmarks.get(tree[0].parentId, function (lnk) { oThis._build_title(lnk); });
-            else
-                chrome.bookmarks.get(this.node, function (lnk) { oThis._build_title(lnk); });
-        } else
-        {
-            oThis = this;
-            chrome.bookmarks.getChildren("0", function (children)
-            {
-                children.each(function (lnk)
-                {
-                    if (lnk.id != 1)
-                    {
-                        oThis._add_item(lnk);
-                    }
-                }, oThis);
-            });
-            //chrome.bookmarks.get(tree[0].parentId, function(lnk){ oThis._add_item(lnk[0]); });
-        }
-        tree.each(this._add_item, this);
-    },
-
-	_build_tree_new: function (tree) {
+	_build_tree: function (tree) {
 		var oThis;
 		if (this.filter == '') {
 			oThis = this;
 			if (tree[0])
 				chrome.bookmarks.get(tree[0].parentId, function (lnk) {
 					oThis.isLeaf = true;
-					oThis._build_title_new(lnk, oThis.isLeaf);
+					oThis._build_title(lnk, oThis.isLeaf);
 				});
 			else
 				chrome.bookmarks.get(this.node, function (lnk) {
 					oThis.isLeaf = true;
-					oThis._build_title_new(lnk, oThis.isLeaf);
+					oThis._build_title(lnk, oThis.isLeaf);
 				});
 		} else {
 			oThis = this;
-			/*chrome.bookmarks.getChildren("0", function (children) {
-				children.each(function (lnk) {
-					if (lnk.id != 1) {
-						oThis._add_item_new(lnk);
-					}
-				}, oThis);
-			});*/
-			//chrome.bookmarks.get(tree[0].parentId, function(lnk){ oThis._add_item(lnk[0]); });
+
+			// Search and filter
 			chrome.bookmarks.search(this.filter, function (unfilteredResults) {
 				var bResultsMustContainQueryPhrase = $F('results_contains_query_phrase');
 
@@ -268,40 +233,30 @@ AB.list = Class.create({
 					var filteredResults = unfilteredResults.filter(function (lnk) {
 						return ((lnk.url && lnk.url.toLowerCase().indexOf(oThis.filter.toLowerCase()) >= 0 ) || (lnk.title && lnk.title.toLowerCase().indexOf(oThis.filter.toLowerCase()) >= 0))
 
-					})
-					//filteredResults.each(oThis._add_item_new, oThis);
+					});
 					oThis.bResultsMustContainQueryPhrase = bResultsMustContainQueryPhrase;
-					async.each(filteredResults, oThis._add_item_new.bind(oThis));
+					async.each(filteredResults, oThis._add_item.bind(oThis));
 				} else {
-					async.each(unfilteredResults, oThis._add_item_new.bind(oThis));
-					//unfilteredResults.each(oThis._add_item_new, oThis);
+					async.each(unfilteredResults, oThis._add_item.bind(oThis));
 				}
 
 			})
 		}
-
-		//tree.each(this._add_item_new, this);
 	},
 
-
-	_add_item_new: function (lnk)
+	_add_item: function (lnk)
 	{
 		var row;
+
 		// URLs
 		if (lnk.url)
 		{
-			/*if (this.filter != '' && !(lnk.url.toLowerCase().indexOf(this.filter.toLowerCase()) >= 0 || lnk.title.toLowerCase().indexOf(this.filter.toLowerCase()) >= 0))
-			{
-				return;
-			}*/
-			row = this._create_node(lnk);
 
+			row = this._create_node(lnk);
 			this.list_ul.insert(row);
+
 		} else
 		{
-			/*if (this.filter != '')
-			{*/
-				// filter folder name
 				if (this.bResultsMustContainQueryPhrase && lnk.title.toLowerCase().indexOf(this.filter.toLowerCase()) >= 0)
 				{
 					row = this._create_folder(lnk);
@@ -309,9 +264,6 @@ AB.list = Class.create({
 				} else {
 					var splitFilter = this.filter.split(' ');
 					var oThis = this;
-					var callback = function (item, cb) {
-
-          }
 					async.some(splitFilter, function(item, callback) {
 					  var bFound = lnk.title.toLowerCase().indexOf(item.toLowerCase()) >= 0;
 					  if (bFound){
@@ -325,22 +277,10 @@ AB.list = Class.create({
 							}
             })
         }
-				// filtering
-			//	var oThis = this;
-			//	chrome.bookmarks.getChildren(lnk.id, function (childs) {
-			//		childs.each(oThis._add_item, oThis);
-			//	});
-			/*}
-			else
-			{
-				// building a tree
-				row = this._create_folder(lnk);
-				this.list_ul.insert(row);
-			}*/
 		}
 	},
 
-	_build_title_new: function (tree, isUserSelectedTitle)
+	_build_title: function (tree, isUserSelectedTitle)
 	{
 		// do things here
 		var row;
@@ -354,13 +294,13 @@ AB.list = Class.create({
 			chrome.bookmarks.get(treeNode.parentId, function (links) {
 			 if (isUserSelectedTitle && links instanceof Array && links.length > 0) {
 			   isUserSelectedTitle = false;
-			   // this._add_item_new(lnk);
+
 				 chrome.bookmarks.getChildren(treeNode.id, function (children) {
-					 async.each(children, oThis._add_item_new.bind(oThis));
-					 oThis._build_title_new(treeNode, isUserSelectedTitle);
+					 async.each(children, oThis._add_item.bind(oThis));
+					 oThis._build_title(treeNode, isUserSelectedTitle);
 				 });
 			 }else {
-				 oThis._build_title_new(links, isUserSelectedTitle);
+				 oThis._build_title(links, isUserSelectedTitle);
        }
 			});
 		} else
@@ -369,59 +309,6 @@ AB.list = Class.create({
 			this.title_ul.insert({ top: row });
 		}
 	},
-    _build_title: function (tree)
-    {
-        // do things here
-        var row;
-        if (tree[0].id != "0")
-        {
-            row = this._create_folder(tree[0], true);
-            this.title_ul.insert({ top: row });
-            var oThis = this;
-            chrome.bookmarks.get(tree[0].parentId, function (lnk) { oThis._build_title(lnk); });
-        } else
-        {
-            row = this._create_folder({ id: "0", title: "\\" }, true);
-            this.title_ul.insert({ top: row });
-        }
-    },
-
-    _add_item: function (lnk)
-    {
-        var row;
-        // URLs
-        if (lnk.url)
-        {
-            if (this.filter != '' && !(lnk.url.toLowerCase().indexOf(this.filter.toLowerCase()) >= 0 || lnk.title.toLowerCase().indexOf(this.filter.toLowerCase()) >= 0))
-            {
-                return;
-            }
-            row = this._create_node(lnk);
-
-            this.list_ul.insert(row);
-        } else
-        {
-            if (this.filter != '')
-            {
-                // filter folder name
-                if (lnk.title.toLowerCase().indexOf(this.filter.toLowerCase()) >= 0)
-                {
-                    row = this._create_folder(lnk);
-                    this.list_ul.insert(row);
-                }
-                // filtering
-                var oThis = this;
-                chrome.bookmarks.getChildren(lnk.id, function (childs) {
-                    childs.each(oThis._add_item, oThis);
-                });
-            } else
-            {
-                // building a tree
-                row = this._create_folder(lnk);
-                this.list_ul.insert(row);
-            }
-        }
-    },
 
     _create_recent_folder: function (fldr)
     {
@@ -540,7 +427,6 @@ AB.list = Class.create({
         {
             icon.src = 'chrome://favicon/' + lnk.url;
         }
-
 
         // Link
         var link = new Element('a').insert(icon).insert(" " + lnk.title);
