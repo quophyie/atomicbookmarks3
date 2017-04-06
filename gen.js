@@ -105,6 +105,9 @@ function getStorageValue(valueId, defaultValue, saveDefaultIfUndefined)
         if (defaultValue != null && saveDefaultIfUndefined)
             localStorage[valueId] = defaultValue;
         return defaultValue;
+    } else {
+        localStorage[valueId] = defaultValue;
+        return defaultValue;
     }
     return result;
 }

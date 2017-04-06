@@ -1,6 +1,6 @@
 var lastTargetNode = null;
 
-function menu(evt)
+/**function menu(evt)
 {
     evt = evt || window.event;
     evt.cancelBubble = true;
@@ -100,6 +100,128 @@ function menu(evt)
     contextMenu.style.left = menuX + "px";
     contextMenu.style.display = "";
     return false;
+}*/
+
+function menu(evt)
+{
+    evt = evt || window.event;
+    evt.cancelBubble = true;
+    evt.preventDefault();
+    // var bookmarks = document.getElementById("results");
+    // bookmarks.setOpacity(0.5);
+
+    var contextMenu = document.getElementById("contextMenuId");
+
+    var targetNode = evt.target; // srcElement;
+    lastTargetNode = targetNode;
+    var nodeId = targetNode.alt;
+    var url = targetNode.href;
+    var isFolder = (url == "");
+    var text = targetNode.innerText.substring(1);
+
+    var html = "";
+    var isPanel = targetNode.id == "results";
+    if (isFolder || isPanel)
+    {
+        if (isPanel){
+            nodeId = disp_list.node;
+        }
+        html = localStorage[FOLDER_OR_PANEL_CONTEXT_MENU_HTML].substr(0);
+        contextMenu.innerHTML = html;
+
+        Event.observe('panel_folder_context_menu_save_tab_to_folder', "click", function(e) {
+            saveTabToFolder(nodeId);
+
+        });
+
+        Event.observe('panel_folder_context_menu_save_session_here', "click", function() {
+            saveSessionToFolder(nodeId)
+        });
+
+        Event.observe('panel_folder_context_menu_open_all_bookmarks', "click", function() {
+            openAllBookmarks(nodeId, false, false)
+        });
+
+        Event.observe('panel_folder_context_menu_open_all_in_new_window', "click", function() {
+            openAllBookmarks(nodeId, true, false)
+        });
+
+        Event.observe('panel_folder_context_menu_open_folder_in_incognito_window', "click", function() {
+            openAllBookmarks( nodeId, true, true)
+        });
+
+        Event.observe('panel_folder_context_menu_create_new_folder', "click", function() {
+            createNewFolder(nodeId)
+        });
+
+        Event.observe('panel_folder_context_menu_edit_folder', "click", function() {
+            editFolder(nodeId)
+        });
+
+        Event.observe('panel_folder_context_menu_remove_folder', "click", function() {
+            removeFolder(nodeId, text)
+        });
+
+        if (isPanel)
+        {
+            // Bookmarks panel
+            lastTargetNode = null;
+            html.replace('<li id="panel_folder_context_menu_edit_folder" style="display: block">', '<li id="panel_folder_context_menu_edit_folder" style="display: none">')
+            html.replace('<li id="panel_folder_context_menu_remove_folder" style="display: block">', '<li id="panel_folder_context_menu_remove_folder" style="display: none">')
+        } else
+        {
+            targetNode.style.outline = '2px groove #ffcc00';
+        }
+    } else
+    {
+        html = localStorage[BOOKMARK_CONTEXT_MENU_HTML].substr(0);
+        contextMenu.innerHTML = html;
+        targetNode.style.outline = '2px groove #ffcc00';
+
+        Event.observe('bmk_context_menu_open_bmk_in_bg', "click", function(e) {
+            openInTab(nodeId, true, false);
+        });
+
+        Event.observe('bmk_context_menu_open_bmk_in_bg', "click", function(e) {
+            openInTab(nodeId, true, true);
+        });
+
+        Event.observe('bmk_context_menu_open_bmk_in_current_tab', "click", function(e) {
+            openInTab(nodeId, false, false);
+        });
+
+        Event.observe('bmk_context_menu_open_bmk_in_new_wnd', "click", function(e) {
+            openInWindow(nodeId, false);
+        });
+
+        Event.observe('bmk_context_menu_open_bmk_in_incognito_wnd', "click", function(e) {
+            openInWindow(nodeId, true);
+        });
+
+        Event.observe('bmk_context_menu_edit_bmk', "click", function(e) {
+            editBookmark(nodeId);
+        });
+
+        Event.observe('bmk_context_menu_remove_bmk', "click", function(e) {
+            removeBookmark(nodeId);
+        });
+    }
+
+    //contextMenu.innerHTML = html;
+    localizeDocument(contextMenu);
+    var position = defPosition(evt);
+    var menuX = position.x;
+    var menuY = position.y - 10;
+    var menuHeight = contextMenu.getHeight();
+    var menuWidth = contextMenu.getWidth();
+    if (menuX + menuWidth > window.innerWidth)
+        menuX = window.innerWidth - menuWidth;
+    if (menuY + menuHeight > window.innerHeight)
+        menuY = window.innerHeight - menuHeight;
+    contextMenu.style.top = menuY + "px";
+    contextMenu.style.left = menuX + "px";
+    contextMenu.style.display = "";
+    return false;
 }
 
 function editBookmark(nodeId)
@@ -119,6 +241,7 @@ function editBookmark(nodeId)
 			.dialog({
 			    title: _l('editBookmark'),
 			    modal: true,
+                height: 140,
 			    //show: "puff",
 			    hide: "explode",
 			    buttons: { "Ok": function () { $j(this).dialog("close"); onBookmarkEdited(nodeId, inputName.value, inputURL.value, folderSelector.value); },
@@ -168,7 +291,7 @@ function editFolder(nodeId)
             modal: true,
             //show: "puff",
             hide: "explode",
-            height: 150,
+            height: 170,
             buttons: { "Ok": function () { $j(this).dialog("close"); onBookmarkEdited(nodeId, inputName.value, "", folderSelector.value); },
                 "Cancel": function () { $j(this).dialog("close"); }
             }
@@ -186,7 +309,7 @@ function createNewFolder(nodeId)
 			    modal: true,
 			    //show: "puff",
 			    hide: "explode",
-			    height: 120,
+			    height: 140,
 			    buttons: { "Ok": function () { $j(this).dialog("close"); onCreateNewFolder(nodeId, inputName.value); },
 			        "Cancel": function () { $j(this).dialog("close"); }
 			    }
@@ -307,7 +430,7 @@ function removeFolder(nodeId, folderName)
 			    modal: true,
 			    //show: "puff",
 			    hide: "explode",
-			    height: 120,
+			    height: 140,
 			    buttons: { "Ok": function ()
 			    {
 			        $j(this).dialog("close");

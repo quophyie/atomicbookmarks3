@@ -2,10 +2,13 @@
  * Created by dman on 03/04/2017.
  */
 
+var FOLDER_OR_PANEL_CONTEXT_MENU_HTML="FOLDER_OR_PANEL_CONTEXT_MENU_HTML";
+var BOOKMARK_CONTEXT_MENU_HTML="BOOKMARK_CONTEXT_MENU_HTML";
 (function ()
 {
 	Event.observe('search_box', "keyup", search_key);
 	Event.observe('search_box', "click", search_key);
+    Event.observe('results', "contextmenu", menu);
 	Event.observe('open_chrome_bookmarks', "click", function ()
 	{
 		if (localStorage['edit_window'] == "true")
@@ -30,4 +33,41 @@
 	if (startupFolder > 1)
 		$("lock").src = "img/startup_folder_locked.png";
 	disp_list.populate(startupFolder);
+})();
+
+/**
+ * Load the folder and bookmarks context menu html
+ */
+
+(function () {
+    $j.get("/templates/menu/folder-context-menu.html", function(data, status){
+        getStorageValue(FOLDER_OR_PANEL_CONTEXT_MENU_HTML, "", true);
+        getStorageValue(FOLDER_OR_PANEL_CONTEXT_MENU_HTML, data, true);
+    });
+})();
+
+(function () {
+    $j.get("/templates/menu/bookmark-context-menu-view.html", function(data, status){
+        localStorage[BOOKMARK_CONTEXT_MENU_HTML] = null;
+        getStorageValue(BOOKMARK_CONTEXT_MENU_HTML, "", true);
+        getStorageValue(BOOKMARK_CONTEXT_MENU_HTML, data, true);
+    });
+})();
+/**
+ * Register pop top menu handles
+ */
+
+(function () {
+    Event.observe('lock', "click", function () {
+        lockStartupFolder()
+	});
+
+    Event.observe('btn_save_bookmark', "click", function () {
+        saveTab();
+    });
+
+    Event.observe('btn_save_session', "click", function () {
+        saveSession();
+    });
+
 })();

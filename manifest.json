@@ -13,7 +13,7 @@
    },
    "description": "Atomic Bookmarks 3",
    "default_locale": "en",
-   "content_security_policy": "script-src 'self' 'unsafe-eval'  https://ssl.google-analytics.com; object-src 'self'",
+   "content_security_policy": "script-src 'self' 'unsafe-eval' https://ssl.google-analytics.com; object-src 'self'",
    "name": "Atomic Bookmarks 3",
    "icons": {
       "16": "img/icon-16.png",
