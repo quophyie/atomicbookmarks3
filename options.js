@@ -90,4 +90,22 @@ function saveComboboxState(comboBox, localStorageId)
     Event.observe('open_win_middle', "change", function (itm) {
         localStorage['open_in_middle'] = "2";
     });
+
+
+    Event.observe('recent_num', "input", function (event) {
+        setIntProperty(event.target, 999)
+    });
+
+    Event.observe('startup_folder', "change", function (event) {
+        saveComboboxState(event.target, 'startup_folder')
+    });
+
+    Event.observe('save_bookmarks_to', "change", function (event) {
+        saveComboboxState(event.target, 'bookmarks_folder')
+    });
+
+    Event.observe('save_sessions_to', "change", function (event) {
+        saveComboboxState(event.target, 'sessions_folder')
+    });
+
 })();
